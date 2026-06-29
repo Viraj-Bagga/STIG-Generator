@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dc="http://purl.org/dc/elements/1.1/" id="New_STIG_Benchmark" xml:lang="en">
+  <title>New STIG Benchmark</title>
+  <description>This is a STIG Benchmark created automatically.</description>
+  <publisher>DISA</publisher>
+  <version>1</version>
+  <release-info>Release: 1 Benchmark Date: 2026-06-26</release-info>
+  <Group id="V-10000">
+    <title>Default Group Title</title>
+    <description>Group level description details.</description>
+    <Rule id="SV-10000r1_rule" severity="medium" weight="10.0">
+      <title>Default STIG Rule Title</title>
+      <description>&lt;VulnDiscussion&gt;Explain the background information and specific risk vector here.&lt;/VulnDiscussion&gt;</description>
+      <reference href="https://csrc.nist.gov/projects/risk-management-framework">AC-3</reference>
+      <ident system="http://cyber.mil/cci">CCI-000366</ident>
+      <rationale>Why this control must be verified and remediated.</rationale>
+      <fixtext fixref="fix_SV-10000r1_rule">Run command 'stig-remediate' to resolve the finding automatically.</fixtext>
+      <check system="C-customos-manual">
+        <check-content>1. Check check-item A.
+2. Confirm check-item B.
+3. If missing, this is a finding.</check-content>
+      </check>
+    </Rule>
+  </Group>
+  <Group id="V-10002">
+    <title>New Group Title 2</title>
+    <description/>
+    <Rule id="SV-10002r1_rule" severity="medium" weight="10.0">
+      <title>New STIG Rule Title 2</title>
+      <description>&lt;VulnDiscussion&gt;Vulnerability discussion...&lt;/VulnDiscussion&gt;</description>
+      <fixtext fixref="fix_SV-10002r1_rule">Remediation fix steps...</fixtext>
+      <check system="C-customos-manual">
+        <check-content>Manual verification details...</check-content>
+      </check>
+    </Rule>
+  </Group>
+</Benchmark>
