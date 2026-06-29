@@ -1,20 +1,17 @@
-# Python
+# Python bytecode
 __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
 .Python
 *.egg-info/
-dist/
-build/
-*.spec
 
 # Virtual environment
 venv/
 .venv/
 env/
 
-# PyInstaller build output (keep the .spec file tracked)
+# PyInstaller build output (stig_authoring_pro.spec IS tracked)
 build/
 dist/
 
@@ -26,9 +23,5 @@ Thumbs.db
 .idea/
 .vscode/
 
-# App runtime files
-*.autosave.xml
-~/.stig_authoring_autosave.xml
-
-# Sensitive / generated outputs
+# Generated / sensitive outputs
 output_*.xml
