@@ -1,0 +1,67 @@
+name: Build & Release (Linux)
+
+on:
+  push:
+    tags:
+      - "v*"          # triggers on tags like v1.0, v1.2.3, etc.
+
+permissions:
+  contents: write   # needed to create GitHub Releases
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install system dependencies (Tkinter + display)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y python3-tk libxcb-xinerama0 libxcb1 \
+            libx11-6 libxext6 libxrender1 libxtst6 libxi6
+
+      - name: Install Python dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build standalone binary
+        run: |
+          pyinstaller stig_authoring_pro.spec --distpath dist/ --workpath build/
+
+      - name: Rename binary with version tag
+        run: |
+          TAG=${{ github.ref_name }}
+          mv dist/STIG-Authoring-Pro "dist/STIG-Authoring-Pro-${TAG}-linux-x86_64"
+          chmod +x "dist/STIG-Authoring-Pro-${TAG}-linux-x86_64"
+
+      - name: Create GitHub Release and upload binary
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "STIG Authoring Pro ${{ github.ref_name }}"
+          body: |
+            ## STIG Authoring Pro ${{ github.ref_name }}
+
+            ### Download
+            Download the binary for your platform below and run it directly — no Python installation required.
+
+            ### Linux (Debian/Ubuntu x86_64)
+            ```bash
+            chmod +x STIG-Authoring-Pro-${{ github.ref_name }}-linux-x86_64
+            ./STIG-Authoring-Pro-${{ github.ref_name }}-linux-x86_64
+            ```
+
+            ### Requirements (Linux)
+            - A desktop environment with display (X11 or Wayland with XWayland)
+            - `libxcb` and `libx11` (pre-installed on most Debian/Ubuntu systems)
+          files: dist/STIG-Authoring-Pro-${{ github.ref_name }}-linux-x86_64
+          draft: false
+          prerelease: false
