@@ -42,17 +42,17 @@ THEMES = {
         "COLOR_SEVERITY_LOW":   "#10b981",
     },
     "light": {
-        "COLOR_BG_DARK":        "#9da1b3",
-        "COLOR_BG_MAIN":        "#adb1c2",
-        "COLOR_BG_CARD":        "#b8bcc9",
-        "COLOR_BG_INPUT":       "#a5a9ba",
-        "COLOR_BG_HOVER":       "#9c9fb1",
-        "COLOR_BORDER":         "#8b8fa2",
-        "COLOR_ACCENT":         "#5e6ad2",
-        "COLOR_ACCENT_HOVER":   "#4f5bbf",
-        "COLOR_TEXT_PRIMARY":   "#1a1a28",
-        "COLOR_TEXT_MUTED":     "#44475a",
-        "COLOR_TEXT_DIM":       "#62667a",
+        "COLOR_BG_DARK":        "#fbfbfd",
+        "COLOR_BG_MAIN":        "#f4f5f8",
+        "COLOR_BG_CARD":        "#e9ebf1",
+        "COLOR_BG_INPUT":       "#ffffff",
+        "COLOR_BG_HOVER":       "#e1e4ec",
+        "COLOR_BORDER":         "#cdd2dc",
+        "COLOR_ACCENT":         "#4f5bd5",
+        "COLOR_ACCENT_HOVER":   "#3f4ac0",
+        "COLOR_TEXT_PRIMARY":   "#141824",
+        "COLOR_TEXT_MUTED":     "#5a6172",
+        "COLOR_TEXT_DIM":       "#3d4454",
         "COLOR_SUCCESS":        "#059669",
         "COLOR_SUCCESS_HOVER":  "#047857",
         "COLOR_DANGER":         "#e11d48",
@@ -615,16 +615,16 @@ class STIGApp(ctk.CTk):
         self.theme_btn.pack(side="right")
 
         # --- Row 1: Search ---
-        self.search_var = ctk.StringVar()
-        self.search_var.trace_add("write", self.on_search_changed)
+        # No textvariable: CTkEntry never shows placeholder_text when one is set.
         self.search_entry = ctk.CTkEntry(
-            self.sidebar, textvariable=self.search_var,
+            self.sidebar,
             placeholder_text="Search rules...",
             height=34, font=(FONT_FAMILY, 12),
             border_color=COLOR_BORDER, fg_color=COLOR_BG_INPUT,
             text_color=COLOR_TEXT_PRIMARY, corner_radius=6
         )
         self.search_entry.grid(row=1, column=0, padx=12, pady=(0, 8), sticky="ew")
+        self.search_entry.bind("<KeyRelease>", self.on_search_changed)
 
         # --- Row 2: Divider ---
         ctk.CTkFrame(self.sidebar, height=1, fg_color=COLOR_BORDER).grid(
@@ -938,7 +938,7 @@ class STIGApp(ctk.CTk):
             card.destroy()
         self.rule_buttons.clear()
 
-        search_text = self.search_var.get().lower()
+        search_text = self.search_entry.get().strip().lower()
         id_font    = (FONT_FAMILY, int(11 * self.zoom_scale), "bold")
         title_font = (FONT_FAMILY, int(11 * self.zoom_scale))
         sev_font   = (FONT_FAMILY, int(9  * self.zoom_scale), "bold")
@@ -984,9 +984,9 @@ class STIGApp(ctk.CTk):
                          text_color=sev_color, anchor="e").pack(side="right")
 
             # Title line
-            title_str = (rule.title or "(No Title)")[:38]
-            if len(rule.title or "") > 38:
-                title_str += "…"
+            title_str = rule.title or "(No Title)"
+            if len(title_str) > 64:
+                title_str = title_str[:64].rsplit(" ", 1)[0].rstrip(",.;:") + "…"
             ctk.CTkLabel(card, text=title_str, font=title_font,
                          text_color=COLOR_TEXT_PRIMARY if is_active else COLOR_TEXT_MUTED,
                          anchor="w", wraplength=220, justify="left").pack(
@@ -1361,7 +1361,6 @@ class STIGApp(ctk.CTk):
     def on_manual_refresh(self):
         self.save_active_rule_details()
         self.update_xml_preview()
-        messagebox.showinfo("Preview Sync", "XML live preview updated from fields successfully.")
 
     def update_xml_preview(self):
         """Builds XML data, renders it, and applies IDE-like syntax coloring."""
@@ -1541,7 +1540,10 @@ class STIGApp(ctk.CTk):
     def open_benchmark_info(self):
         dlg = ctk.CTkToplevel(self)
         dlg.title("Benchmark Properties")
-        dlg.geometry("520x420")
+        self.update_idletasks()
+        dx = self.winfo_rootx() + (self.winfo_width() - 520) // 2
+        dy = self.winfo_rooty() + (self.winfo_height() - 420) // 3
+        dlg.geometry(f"520x420+{max(dx, 0)}+{max(dy, 0)}")
         dlg.resizable(False, False)
         dlg.transient(self)
         dlg.grab_set()
