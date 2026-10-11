@@ -2,7 +2,7 @@
 
 A desktop app for writing STIG benchmarks. You fill in each rule in a form (IDs, severity, NIST controls, CCIs, the vulnerability discussion, the check and the fix) and the app builds XCCDF 1.1 XML in the layout DISA STIGs use, live, in a pane next to the form. It imports existing benchmarks, exports new ones, and ships as a single Linux binary.
 
-I built it because writing STIG XML by hand is slow and easy to get wrong: one unescaped `<` in a check, or a rule missing its CCI, and the file will not load in STIG Viewer. The form keeps every rule in the same shape, and the preview shows exactly what will be written.
+Writing STIG XML by hand is slow and easy to break: one unescaped `<` in a check and the whole file stops parsing. The form keeps every rule in the same shape, escapes the text for you, and the preview shows exactly what will be written.
 
 ## What it does
 
