@@ -969,7 +969,7 @@ class STIGApp(ctk.CTk):
             top = ctk.CTkFrame(card, fg_color="transparent")
             top.pack(fill="x", padx=10, pady=(8, 2))
 
-            # The STIG ID (e.g. EXOS-00-000100) is what reviewers refer to a rule by;
+            # The STIG ID (e.g. SMPL-001) is what reviewers refer to a rule by;
             # fall back to the long XCCDF IDs only when it is blank.
             # (Export writes the benchmark version into a blank STIG ID, so skip that.)
             stig_id = rule.stig_id if rule.stig_id != self.benchmark.version else ""

@@ -7,42 +7,42 @@
     xmlns:cpe="http://cpe.mitre.org/language/2.0"
     xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns:dsig="http://www.w3.org/2000/09/xmldsig#"
-    id="xccdf_org.example.exampleos_benchmark"
+    id="xccdf_org.example.sample_benchmark"
     resolved="false"
     xml:lang="en"
     xsi:schemaLocation="http://checklists.nist.gov/xccdf/1.1 http://checklists.nist.gov/xccdf/1.1/xccdf-1.1-schema.xsd">
 
   <status date="2026-10-11">draft</status>
 
-  <title>ExampleOS Security Technical Implementation Guide</title>
+  <title>Sample Product Security Benchmark</title>
 
-  <description>A demo benchmark for a fictional operating system, showing what the app produces. Rule text is written for this demo; the NIST and CCI references are public mappings.</description>
+  <description>A demo benchmark for a fictional product, showing what the app produces. Rule text is written for this demo; the NIST and CCI references are public mappings.</description>
 
   <version>1</version>
 
-  <Group id="EXOS-G-0100" xml:lang="en">
-    <title>SRG-OS-000023-GPOS-00006</title>
+  <Group id="SMPL-G-001" xml:lang="en">
+    <title>Logon banner</title>
     <description></description>
 
-    <Rule id="EXOS-R-0100_rule"
+    <Rule id="SMPL-R-001"
           severity="medium"
           weight="10.0">
 
-      <version>EXOS-00-000100</version>
+      <version>SMPL-001</version>
 
-      <title>ExampleOS must display a notice and consent banner before granting access.</title>
+      <title>The product must display a notice and consent banner before granting access.</title>
 
       <description><![CDATA[
-        <VulnDiscussion>Showing a banner before logon tells users that the system is monitored and what use is authorized. Without it, there is no record that a user was told, which weakens later enforcement.</VulnDiscussion>
+        <VulnDiscussion>A banner shown before logon tells users the system is monitored and what use is authorized. Without one, there is no record that users were told.</VulnDiscussion>
         <FalsePositives></FalsePositives>
         <FalseNegatives></FalseNegatives>
-        <Documentable>false</Documentable>
+        <Documentable></Documentable>
         <Mitigations></Mitigations>
         <SeverityOverrideGuidance></SeverityOverrideGuidance>
         <PotentialImpacts></PotentialImpacts>
         <ThirdPartyTools></ThirdPartyTools>
         <MitigationControl></MitigationControl>
-        <Responsibility>System Administrator</Responsibility>
+        <Responsibility></Responsibility>
         <IAControls></IAControls>
       ]]></description>
 
@@ -52,105 +52,48 @@
 
       <ident system="http://cyber.mil/cci">CCI-000048</ident>
 
-      <rationale>Users must acknowledge the terms of use before they reach a session.</rationale>
+      <rationale>Users acknowledge the terms of use before they reach a session.</rationale>
 
-      <check system="urn:xccdf:C-exampleos:manual">
+      <check system="urn:xccdf:C-sample:manual">
         <check-content>
   <![CDATA[
-Check the SSH daemon banner setting:
-
-$ grep -i '^banner' /etc/ssh/sshd_config
-
-If no banner is configured, or it points at a file without the approved text, this is a finding.
+Start a new session. If no banner with the approved text appears before logon, this is a finding.
   ]]>
         </check-content>
       </check>
 
-      <fixtext fixref="fix_EXOS-R-0100_rule">
+      <fixtext fixref="fix_SMPL-R-001">
   <![CDATA[
-Write the approved notice to /etc/issue.net, set 'Banner /etc/issue.net' in /etc/ssh/sshd_config, and restart sshd.
+Configure the logon banner to display the approved notice.
   ]]>
       </fixtext>
 
     </Rule>
   </Group>
 
-  <Group id="EXOS-G-0110" xml:lang="en">
-    <title>SRG-OS-000109-GPOS-00056</title>
+  <Group id="SMPL-G-002" xml:lang="en">
+    <title>Account lockout</title>
     <description></description>
 
-    <Rule id="EXOS-R-0110_rule"
-          severity="high"
-          weight="10.0">
-
-      <version>EXOS-00-000110</version>
-
-      <title>ExampleOS must not allow direct root logon over SSH.</title>
-
-      <description><![CDATA[
-        <VulnDiscussion>Logging on directly as root leaves no trail of which administrator did what. Administrators should log on with their own account and elevate, so actions are attributable.</VulnDiscussion>
-        <FalsePositives></FalsePositives>
-        <FalseNegatives></FalseNegatives>
-        <Documentable>false</Documentable>
-        <Mitigations></Mitigations>
-        <SeverityOverrideGuidance></SeverityOverrideGuidance>
-        <PotentialImpacts></PotentialImpacts>
-        <ThirdPartyTools></ThirdPartyTools>
-        <MitigationControl></MitigationControl>
-        <Responsibility>System Administrator</Responsibility>
-        <IAControls></IAControls>
-      ]]></description>
-
-      <reference href="https://csrc.nist.gov/projects/risk-management-framework">
-        IA-2 (5)
-      </reference>
-
-      <ident system="http://cyber.mil/cci">CCI-000770</ident>
-
-      <rationale>Individual accountability for privileged actions.</rationale>
-
-      <check system="urn:xccdf:C-exampleos:manual">
-        <check-content>
-  <![CDATA[
-$ grep -i '^permitrootlogin' /etc/ssh/sshd_config
-
-If the value is not 'no', or the line is missing, this is a finding.
-  ]]>
-        </check-content>
-      </check>
-
-      <fixtext fixref="fix_EXOS-R-0110_rule">
-  <![CDATA[
-Set 'PermitRootLogin no' in /etc/ssh/sshd_config and restart sshd.
-  ]]>
-      </fixtext>
-
-    </Rule>
-  </Group>
-
-  <Group id="EXOS-G-0120" xml:lang="en">
-    <title>SRG-OS-000021-GPOS-00005</title>
-    <description></description>
-
-    <Rule id="EXOS-R-0120_rule"
+    <Rule id="SMPL-R-002"
           severity="medium"
           weight="10.0">
 
-      <version>EXOS-00-000120</version>
+      <version>SMPL-002</version>
 
-      <title>ExampleOS must lock an account after three failed logons in 15 minutes.</title>
+      <title>The product must lock an account after three consecutive failed logon attempts.</title>
 
       <description><![CDATA[
-        <VulnDiscussion>Unlimited logon attempts let an attacker guess passwords at leisure. A lockout threshold slows brute-force attacks to the point of being impractical.</VulnDiscussion>
+        <VulnDiscussion>Unlimited logon attempts let an attacker guess passwords at leisure. A lockout threshold makes online guessing impractical.</VulnDiscussion>
         <FalsePositives></FalsePositives>
         <FalseNegatives></FalseNegatives>
-        <Documentable>false</Documentable>
+        <Documentable></Documentable>
         <Mitigations></Mitigations>
         <SeverityOverrideGuidance></SeverityOverrideGuidance>
         <PotentialImpacts></PotentialImpacts>
         <ThirdPartyTools></ThirdPartyTools>
         <MitigationControl></MitigationControl>
-        <Responsibility>System Administrator</Responsibility>
+        <Responsibility></Responsibility>
         <IAControls></IAControls>
       ]]></description>
 
@@ -162,48 +105,46 @@ Set 'PermitRootLogin no' in /etc/ssh/sshd_config and restart sshd.
 
       <rationale>Limits online password guessing.</rationale>
 
-      <check system="urn:xccdf:C-exampleos:manual">
+      <check system="urn:xccdf:C-sample:manual">
         <check-content>
   <![CDATA[
-$ grep -E 'deny|fail_interval' /etc/security/faillock.conf
-
-If 'deny' is greater than 3 or 'fail_interval' is less than 900, this is a finding.
+Review the account lockout setting. If more than three failed attempts are allowed before lockout, this is a finding.
   ]]>
         </check-content>
       </check>
 
-      <fixtext fixref="fix_EXOS-R-0120_rule">
+      <fixtext fixref="fix_SMPL-R-002">
   <![CDATA[
-Set 'deny = 3' and 'fail_interval = 900' in /etc/security/faillock.conf.
+Set the lockout threshold to three failed attempts.
   ]]>
       </fixtext>
 
     </Rule>
   </Group>
 
-  <Group id="EXOS-G-0130" xml:lang="en">
-    <title>SRG-OS-000078-GPOS-00046</title>
+  <Group id="SMPL-G-003" xml:lang="en">
+    <title>Password length</title>
     <description></description>
 
-    <Rule id="EXOS-R-0130_rule"
+    <Rule id="SMPL-R-003"
           severity="medium"
           weight="10.0">
 
-      <version>EXOS-00-000130</version>
+      <version>SMPL-003</version>
 
-      <title>ExampleOS passwords must be at least 15 characters long.</title>
+      <title>The product must require passwords of at least 15 characters.</title>
 
       <description><![CDATA[
-        <VulnDiscussion>Password length is the biggest single factor in how long a password takes to crack. Short passwords fall to offline attacks quickly.</VulnDiscussion>
+        <VulnDiscussion>Password length is the largest single factor in how long a password takes to crack.</VulnDiscussion>
         <FalsePositives></FalsePositives>
         <FalseNegatives></FalseNegatives>
-        <Documentable>false</Documentable>
+        <Documentable></Documentable>
         <Mitigations></Mitigations>
         <SeverityOverrideGuidance></SeverityOverrideGuidance>
         <PotentialImpacts></PotentialImpacts>
         <ThirdPartyTools></ThirdPartyTools>
         <MitigationControl></MitigationControl>
-        <Responsibility>System Administrator</Responsibility>
+        <Responsibility></Responsibility>
         <IAControls></IAControls>
       ]]></description>
 
@@ -215,48 +156,46 @@ Set 'deny = 3' and 'fail_interval = 900' in /etc/security/faillock.conf.
 
       <rationale>Raises the cost of offline cracking.</rationale>
 
-      <check system="urn:xccdf:C-exampleos:manual">
+      <check system="urn:xccdf:C-sample:manual">
         <check-content>
   <![CDATA[
-$ grep -i minlen /etc/security/pwquality.conf
-
-If 'minlen' is less than 15 or not set, this is a finding.
+Review the password policy. If the minimum length is less than 15 characters, this is a finding.
   ]]>
         </check-content>
       </check>
 
-      <fixtext fixref="fix_EXOS-R-0130_rule">
+      <fixtext fixref="fix_SMPL-R-003">
   <![CDATA[
-Set 'minlen = 15' in /etc/security/pwquality.conf.
+Set the minimum password length to 15 characters.
   ]]>
       </fixtext>
 
     </Rule>
   </Group>
 
-  <Group id="EXOS-G-0140" xml:lang="en">
-    <title>SRG-OS-000057-GPOS-00027</title>
+  <Group id="SMPL-G-004" xml:lang="en">
+    <title>Audit record protection</title>
     <description></description>
 
-    <Rule id="EXOS-R-0140_rule"
+    <Rule id="SMPL-R-004"
           severity="medium"
           weight="10.0">
 
-      <version>EXOS-00-000140</version>
+      <version>SMPL-004</version>
 
-      <title>ExampleOS audit logs must be readable only by root.</title>
+      <title>The product must protect audit records from unauthorized read access.</title>
 
       <description><![CDATA[
-        <VulnDiscussion>Audit records are how an intrusion gets reconstructed. If ordinary users can read or change them, an attacker can learn what is watched and cover their tracks.</VulnDiscussion>
+        <VulnDiscussion>Audit records are how an intrusion is reconstructed. If ordinary users can read them, an attacker can learn what is monitored.</VulnDiscussion>
         <FalsePositives></FalsePositives>
         <FalseNegatives></FalseNegatives>
-        <Documentable>false</Documentable>
+        <Documentable></Documentable>
         <Mitigations></Mitigations>
         <SeverityOverrideGuidance></SeverityOverrideGuidance>
         <PotentialImpacts></PotentialImpacts>
         <ThirdPartyTools></ThirdPartyTools>
         <MitigationControl></MitigationControl>
-        <Responsibility>System Administrator</Responsibility>
+        <Responsibility></Responsibility>
         <IAControls></IAControls>
       ]]></description>
 
@@ -268,49 +207,46 @@ Set 'minlen = 15' in /etc/security/pwquality.conf.
 
       <rationale>Protects the integrity of the audit trail.</rationale>
 
-      <check system="urn:xccdf:C-exampleos:manual">
+      <check system="urn:xccdf:C-sample:manual">
         <check-content>
   <![CDATA[
-$ stat -c '%a %U' /var/log/audit/audit.log
-
-If the mode is more permissive than 0600 or the owner is not root, this is a finding.
+Review who can read the audit records. If any non-administrative account can, this is a finding.
   ]]>
         </check-content>
       </check>
 
-      <fixtext fixref="fix_EXOS-R-0140_rule">
+      <fixtext fixref="fix_SMPL-R-004">
   <![CDATA[
-$ chmod 0600 /var/log/audit/audit.log
-$ chown root /var/log/audit/audit.log
+Restrict read access to audit records to administrators.
   ]]>
       </fixtext>
 
     </Rule>
   </Group>
 
-  <Group id="EXOS-G-0150" xml:lang="en">
-    <title>SRG-OS-000033-GPOS-00014</title>
+  <Group id="SMPL-G-005" xml:lang="en">
+    <title>Remote session encryption</title>
     <description></description>
 
-    <Rule id="EXOS-R-0150_rule"
+    <Rule id="SMPL-R-005"
           severity="high"
           weight="10.0">
 
-      <version>EXOS-00-000150</version>
+      <version>SMPL-005</version>
 
-      <title>ExampleOS must use FIPS-validated cryptography for remote sessions.</title>
+      <title>The product must use FIPS-validated cryptography to protect remote sessions.</title>
 
       <description><![CDATA[
-        <VulnDiscussion>Remote sessions carry credentials and commands. Unvalidated algorithms may have weaknesses that let an attacker read or alter the session.</VulnDiscussion>
+        <VulnDiscussion>Remote sessions carry credentials and commands. Unvalidated algorithms may have weaknesses that expose or alter the session.</VulnDiscussion>
         <FalsePositives></FalsePositives>
         <FalseNegatives></FalseNegatives>
-        <Documentable>false</Documentable>
+        <Documentable></Documentable>
         <Mitigations></Mitigations>
         <SeverityOverrideGuidance></SeverityOverrideGuidance>
         <PotentialImpacts></PotentialImpacts>
         <ThirdPartyTools></ThirdPartyTools>
         <MitigationControl></MitigationControl>
-        <Responsibility>System Administrator</Responsibility>
+        <Responsibility></Responsibility>
         <IAControls></IAControls>
       ]]></description>
 
@@ -324,21 +260,68 @@ $ chown root /var/log/audit/audit.log
 
       <rationale>Confidentiality and integrity of remote administration.</rationale>
 
-      <check system="urn:xccdf:C-exampleos:manual">
+      <check system="urn:xccdf:C-sample:manual">
         <check-content>
   <![CDATA[
-$ fips-mode-setup --check
-
-If FIPS mode is not enabled, this is a finding.
+Review the cryptographic settings for remote sessions. If any non-FIPS-validated algorithm is allowed, this is a finding.
   ]]>
         </check-content>
       </check>
 
-      <fixtext fixref="fix_EXOS-R-0150_rule">
+      <fixtext fixref="fix_SMPL-R-005">
   <![CDATA[
-$ fips-mode-setup --enable
+Restrict remote sessions to FIPS-validated algorithms.
+  ]]>
+      </fixtext>
 
-Reboot for the change to take effect.
+    </Rule>
+  </Group>
+
+  <Group id="SMPL-G-006" xml:lang="en">
+    <title>Session timeout</title>
+    <description></description>
+
+    <Rule id="SMPL-R-006"
+          severity="low"
+          weight="10.0">
+
+      <version>SMPL-006</version>
+
+      <title>The product must end a user session after 15 minutes of inactivity.</title>
+
+      <description><![CDATA[
+        <VulnDiscussion>Unattended sessions can be used by anyone with physical or remote access to them.</VulnDiscussion>
+        <FalsePositives></FalsePositives>
+        <FalseNegatives></FalseNegatives>
+        <Documentable></Documentable>
+        <Mitigations></Mitigations>
+        <SeverityOverrideGuidance></SeverityOverrideGuidance>
+        <PotentialImpacts></PotentialImpacts>
+        <ThirdPartyTools></ThirdPartyTools>
+        <MitigationControl></MitigationControl>
+        <Responsibility></Responsibility>
+        <IAControls></IAControls>
+      ]]></description>
+
+      <reference href="https://csrc.nist.gov/projects/risk-management-framework">
+        AC-12
+      </reference>
+
+      <ident system="http://cyber.mil/cci">CCI-002361</ident>
+
+      <rationale>Limits exposure of unattended sessions.</rationale>
+
+      <check system="urn:xccdf:C-sample:manual">
+        <check-content>
+  <![CDATA[
+Review the session timeout. If inactive sessions are not ended within 15 minutes, this is a finding.
+  ]]>
+        </check-content>
+      </check>
+
+      <fixtext fixref="fix_SMPL-R-006">
+  <![CDATA[
+Set the inactivity timeout to 15 minutes or less.
   ]]>
       </fixtext>
 
