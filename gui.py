@@ -118,6 +118,15 @@ def _make_unique_id(base_id, existing_ids):
     return candidate
 
 
+def _header_text(rule, limit=60):
+    """Editor header for a rule: its title cut on a word boundary so a long title
+    stays inside the pane instead of being clipped at both ends."""
+    text = rule.title.strip() or rule.rule_id.strip() or "(New Rule)"
+    if len(text) > limit:
+        text = text[:limit].rsplit(" ", 1)[0].rstrip(",.;:") + "\u2026"
+    return text
+
+
 def _bind_tree(widget, event, handler):
     """Recursively bind an event handler to a widget and all its tk descendants."""
     try:
@@ -1039,8 +1048,7 @@ class STIGApp(ctk.CTk):
         rule = self.benchmark.rules[self.active_rule_index]
         
         # Display the rule title as the main editor header, fallback to rule ID if title is empty
-        title_text = rule.title.strip() or rule.rule_id.strip() or "(New Rule)"
-        self.rule_editor_label.configure(text=title_text)
+        self.rule_editor_label.configure(text=_header_text(rule))
         
         # Set values
         self.rule_fields["group_id"].set_value(rule.group_id)
@@ -1627,7 +1635,7 @@ class STIGApp(ctk.CTk):
         # Update the Rule Editor header and rebuild the sidebar card list when title/ID changes
         if self.active_rule_index is not None and 0 <= self.active_rule_index < len(self.benchmark.rules):
             rule = self.benchmark.rules[self.active_rule_index]
-            title_text = rule.title.strip() or rule.rule_id.strip() or "(New Rule)"
+            title_text = _header_text(rule)
             if self.rule_editor_label.cget("text") != title_text:
                 self.rule_editor_label.configure(text=title_text)
                 self.update_sidebar_rule_list()
