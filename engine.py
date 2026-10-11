@@ -3,6 +3,22 @@ import xml.etree.ElementTree as ET
 import re
 from models import STIGBenchmark, STIGRule
 
+# Used when a benchmark has no ID of its own. Group and rule IDs that are left
+# blank are derived from the benchmark ID, so nothing product-specific is baked in.
+DEFAULT_BENCHMARK_ID = "xccdf_org.example_benchmark"
+
+
+def _id_prefix(benchmark_id):
+    """'xccdf_org.example_benchmark' -> 'xccdf_org.example'."""
+    bid = benchmark_id or DEFAULT_BENCHMARK_ID
+    return bid[: -len("_benchmark")] if bid.endswith("_benchmark") else bid
+
+
+def _product_slug(prefix):
+    """'xccdf_org.example' -> 'example', for the manual check system URN."""
+    tail = prefix.rsplit(".", 1)[-1]
+    return re.sub(r"[^a-z0-9-]+", "-", tail.lower()).strip("-") or "product"
+
 
 def remove_namespaces(elem):
     """Recursively strips namespaces from the tags of an XML tree elements."""
@@ -161,8 +177,10 @@ def parse_group_element(group_elem):
 
 
 def generate_benchmark_xml(benchmark):
-    """Generates an XCCDF XML string in the DISA STIG layout."""
-    bid = benchmark.benchmark_id or "xccdf_org.example_benchmark"
+    """Generates an XCCDF 1.1 XML string in the layout DISA STIGs use."""
+    bid = benchmark.benchmark_id or DEFAULT_BENCHMARK_ID
+    prefix = _id_prefix(bid)
+    check_system = f"urn:xccdf:C-{_product_slug(prefix)}:manual"
 
     lines = [
         '<?xml version="1.0" encoding="UTF-8"?>',
@@ -190,8 +208,8 @@ def generate_benchmark_xml(benchmark):
     ]
 
     for idx, rule in enumerate(benchmark.rules):
-        group_id = rule.group_id or f"xccdf_org.example_group_{idx + 1:04d}"
-        rule_id  = rule.rule_id  or f"xccdf_org.example_rule_{idx + 1:04d}"
+        group_id = rule.group_id or f"{prefix}_group_{idx + 1:04d}"
+        rule_id  = rule.rule_id  or f"{prefix}_rule_{idx + 1:04d}"
         severity = rule.severity or "medium"
 
         desc_inner = (
@@ -247,7 +265,7 @@ def generate_benchmark_xml(benchmark):
             ]
 
         lines += [
-            '      <check system="urn:xccdf:C-example:manual">',
+            f'      <check system="{_attr(check_system)}">',
             '        <check-content>',
             '  <![CDATA[',
             _cdata_safe(rule.manual_check),

@@ -4,7 +4,8 @@ from tkinter import filedialog, messagebox
 import os
 import re
 from models import STIGBenchmark, STIGRule
-from engine import generate_benchmark_xml, parse_benchmark_xml
+from datetime import date
+from engine import DEFAULT_BENCHMARK_ID, generate_benchmark_xml, parse_benchmark_xml
 
 ctk.set_appearance_mode("dark")
 
@@ -283,11 +284,11 @@ class STIGApp(ctk.CTk):
         
         # Load starting default blank STIG
         default_bench = STIGBenchmark({
-            "benchmark_id": "xccdf_org.example_benchmark",
-            "title": "ExampleOS Security Technical Implementation Guide (STIG)",
-            "description": "Security standards and implementation checks for ExampleOS.",
+            "benchmark_id": DEFAULT_BENCHMARK_ID,
+            "title": "New STIG Benchmark",
+            "description": "",
             "version": "1",
-            "release_info": "2026-06-26",
+            "release_info": date.today().isoformat(),
             "publisher": "draft",
             "rules": [{
                 "group_id": "",
@@ -956,7 +957,11 @@ class STIGApp(ctk.CTk):
             top = ctk.CTkFrame(card, fg_color="transparent")
             top.pack(fill="x", padx=10, pady=(8, 2))
 
-            id_str = rule.rule_id or rule.group_id or "New Rule"
+            # The STIG ID (e.g. EXOS-00-000100) is what reviewers refer to a rule by;
+            # fall back to the long XCCDF IDs only when it is blank.
+            # (Export writes the benchmark version into a blank STIG ID, so skip that.)
+            stig_id = rule.stig_id if rule.stig_id != self.benchmark.version else ""
+            id_str = stig_id or rule.rule_id or rule.group_id or "New Rule"
             ctk.CTkLabel(top, text=id_str, font=id_font,
                          text_color=COLOR_ACCENT if is_active else COLOR_TEXT_DIM,
                          anchor="w").pack(side="left")
