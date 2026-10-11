@@ -1,6 +1,7 @@
 import customtkinter as ctk
 import tkinter as tk
 from tkinter import filedialog, messagebox
+import io
 import os
 import re
 from models import STIGBenchmark, STIGRule
@@ -308,6 +309,17 @@ class STIGApp(ctk.CTk):
         self.load_benchmark(default_bench)
         # Treat the startup state as "already saved" so closing immediately never warns
         self._last_saved_xml = generate_benchmark_xml(self.benchmark)
+
+        # Read any autosave a previous session left behind now. The change
+        # checker started below writes this session's state to the same path on
+        # its first pass, which would otherwise overwrite it.
+        self._recovered_xml = None
+        try:
+            if os.path.exists(AUTOSAVE_PATH):
+                with open(AUTOSAVE_PATH, encoding="utf-8") as f:
+                    self._recovered_xml = f.read()
+        except OSError:
+            pass
 
         # Wire up close-window handler before starting the daemon
         self.protocol("WM_DELETE_WINDOW", self._on_close)
@@ -1459,7 +1471,7 @@ class STIGApp(ctk.CTk):
             pass
 
     def _restore_autosave_if_exists(self):
-        if not os.path.exists(AUTOSAVE_PATH):
+        if not self._recovered_xml:
             return
         if messagebox.askyesno(
             "Recover Previous Session",
@@ -1468,10 +1480,11 @@ class STIGApp(ctk.CTk):
             icon="warning"
         ):
             try:
-                recovered = parse_benchmark_xml(AUTOSAVE_PATH)
+                recovered = parse_benchmark_xml(io.BytesIO(self._recovered_xml.encode("utf-8")))
                 if recovered.rules:
+                    # Leave _last_saved_xml alone: recovered work was never
+                    # exported, so closing should still offer to export it.
                     self.load_benchmark(recovered)
-                    self._last_saved_xml = generate_benchmark_xml(self.benchmark)
             except Exception as e:
                 messagebox.showerror("Recovery Failed", f"Could not restore autosave:\n{e}")
         else:
