@@ -1,6 +1,6 @@
 # STIG Authoring Pro
 
-A desktop app for writing STIG benchmarks. You fill in each rule in a form (IDs, severity, NIST controls, CCIs, the vulnerability discussion, the check and the fix) and the app builds XCCDF 1.1 XML in the layout DISA STIGs use, live, in a pane next to the form. It imports existing benchmarks, exports new ones, and ships as a single Linux binary.
+A desktop app for writing STIG benchmarks. You fill in each rule in a form (IDs, severity, NIST controls, CCIs, the vulnerability discussion, the check and the fix) and the app builds XCCDF 1.1 XML in the layout DISA STIGs use, live, in a pane next to the form. It imports existing benchmarks, exports new ones, and ships as a single binary for Linux and Windows.
 
 Writing STIG XML by hand is slow and easy to break: one unescaped `<` in a check and the whole file stops parsing. The form keeps every rule in the same shape, escapes the text for you, and the preview shows exactly what will be written.
 
@@ -18,12 +18,15 @@ Writing STIG XML by hand is slow and easy to break: one unescaped `<` in a check
 
 ## Running it
 
-Download the binary from the latest [release](../../releases) and run it:
+Download the binary for your platform from the latest [release](../../releases).
 
 ```bash
+# Linux
 chmod +x STIG-Authoring-Pro-v*-linux-x86_64
 ./STIG-Authoring-Pro-v*-linux-x86_64
 ```
+
+On Windows, run `STIG-Authoring-Pro-v*-windows-x86_64.exe`. It is unsigned, so SmartScreen may ask once.
 
 Or from source, with Python 3 and Tk:
 
@@ -43,6 +46,6 @@ On Debian or Ubuntu, Tk comes from `sudo apt install python3-tk`.
 | `engine.py` | XCCDF parsing (namespace stripping, both description formats, multi-value NIST and CCI) and generation |
 | `gui.py` | The CustomTkinter app: three resizable panes, theming, zoom, autosave |
 | `stig_authoring_pro.spec` | PyInstaller spec for the one-file binary |
-| `.github/workflows/build-release.yml` | Builds the binary and attaches it to a GitHub release when a `v*` tag is pushed |
+| `.github/workflows/build-release.yml` | Builds Linux and Windows binaries on every pull request, and publishes them to a GitHub release when a `v*` tag is pushed |
 
 Python, CustomTkinter, ElementTree, PyInstaller, GitHub Actions.

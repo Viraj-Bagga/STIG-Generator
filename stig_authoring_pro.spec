@@ -1,5 +1,5 @@
 # -*- mode: python ; coding: utf-8 -*-
-# PyInstaller spec for STIG Authoring Pro — Linux/Debian build
+# PyInstaller spec for STIG Authoring Pro (Linux and Windows builds)
 
 import sys
 import os

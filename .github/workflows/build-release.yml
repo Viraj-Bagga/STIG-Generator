@@ -1,16 +1,31 @@
-name: Build & Release (Linux)
+name: Build & Release
 
+# Pull requests and manual runs build both binaries as workflow artifacts.
+# Pushing a v* tag also publishes them to a GitHub release.
 on:
   push:
     tags:
-      - "v*"          # triggers on tags like v1.0, v1.2.3, etc.
+      - "v*"
+  pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: write   # needed to create GitHub Releases
 
 jobs:
-  build-linux:
-    runs-on: ubuntu-22.04
+  build:
+    name: Build (${{ matrix.platform }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            platform: linux-x86_64
+            ext: ""
+          - os: windows-latest
+            platform: windows-x86_64
+            ext: ".exe"
 
     steps:
       - name: Checkout source
@@ -22,6 +37,7 @@ jobs:
           python-version: "3.13"
 
       - name: Install system dependencies (Tkinter + display)
+        if: runner.os == 'Linux'
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y python3-tk libxcb-xinerama0 libxcb1 \
@@ -29,39 +45,57 @@ jobs:
 
       - name: Install Python dependencies
         run: |
-          pip install --upgrade pip
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pyinstaller
 
       - name: Build standalone binary
-        run: |
-          pyinstaller stig_authoring_pro.spec --distpath dist/ --workpath build/
+        run: pyinstaller stig_authoring_pro.spec --distpath dist/ --workpath build/
 
-      - name: Rename binary with version tag
+      - name: Name binary with version
+        shell: bash
         run: |
-          TAG=${{ github.ref_name }}
-          mv dist/STIG-Authoring-Pro "dist/STIG-Authoring-Pro-${TAG}-linux-x86_64"
-          chmod +x "dist/STIG-Authoring-Pro-${TAG}-linux-x86_64"
+          if [[ "$GITHUB_REF_TYPE" == "tag" ]]; then VERSION="$GITHUB_REF_NAME"; else VERSION="dev-${GITHUB_SHA::7}"; fi
+          mv "dist/STIG-Authoring-Pro${{ matrix.ext }}" "dist/STIG-Authoring-Pro-${VERSION}-${{ matrix.platform }}${{ matrix.ext }}"
+          ls -l dist
 
-      - name: Create GitHub Release and upload binary
+      - name: Upload build
+        uses: actions/upload-artifact@v4
+        with:
+          name: STIG-Authoring-Pro-${{ matrix.platform }}
+          path: dist/*
+          if-no-files-found: error
+
+  release:
+    name: Publish release
+    if: github.ref_type == 'tag'
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Collect binaries
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Create GitHub Release and upload binaries
         uses: softprops/action-gh-release@v2
         with:
           name: "STIG Authoring Pro ${{ github.ref_name }}"
           body: |
             ## STIG Authoring Pro ${{ github.ref_name }}
 
-            ### Download
-            Download the binary for your platform below and run it directly — no Python installation required.
+            Download the binary for your platform and run it. No Python installation needed.
 
             ### Linux (Debian/Ubuntu x86_64)
             ```bash
             chmod +x STIG-Authoring-Pro-${{ github.ref_name }}-linux-x86_64
             ./STIG-Authoring-Pro-${{ github.ref_name }}-linux-x86_64
             ```
+            Needs a desktop session (X11, or Wayland with XWayland) and `libxcb`/`libx11`, which most Debian and Ubuntu installs already have.
 
-            ### Requirements (Linux)
-            - A desktop environment with display (X11 or Wayland with XWayland)
-            - `libxcb` and `libx11` (pre-installed on most Debian/Ubuntu systems)
-          files: dist/STIG-Authoring-Pro-${{ github.ref_name }}-linux-x86_64
+            ### Windows (x86_64)
+            Run `STIG-Authoring-Pro-${{ github.ref_name }}-windows-x86_64.exe`. The binary is unsigned, so SmartScreen may ask you to confirm the first time.
+          files: dist/*
           draft: false
           prerelease: false
