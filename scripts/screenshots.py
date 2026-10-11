@@ -45,11 +45,13 @@ def load_demo():
 
 
 def search():
-    app.search_var.set("ssh")
+    app.search_entry.insert(0, "ssh")
+    app.on_search_changed()
 
 
 def clear_search():
-    app.search_var.set("")
+    app.search_entry.delete(0, "end")
+    app.on_search_changed()
 
 
 def finish():
