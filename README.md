@@ -16,7 +16,7 @@ Writing STIG XML by hand is slow and easy to break: one unescaped `<` in a check
 - **Autosave and recovery.** Work is saved to `~/.stig_authoring_autosave.xml` every 1.5 seconds. If the app did not close cleanly, it offers to restore that file on the next start, and closing with unexported changes asks first.
 - **Dark and light themes,** and zoom for the whole UI or just the XML pane.
 
-`examples/demo-benchmark.xml` is a six-rule benchmark for a fictional ExampleOS. Import it to see a filled-in file. The rule text is written for the demo; the NIST and CCI references are the public mappings.
+`examples/demo-benchmark.xml` is a six-rule benchmark for a fictional product. Import it to see a filled-in file. The rule text is written for the demo; the NIST and CCI references are the public mappings.
 
 ## Walkthrough
 
@@ -26,7 +26,7 @@ These are captured from the real app by CI (`scripts/screenshots.py` on a virtua
 
 **2. Find a rule.** Search filters by STIG ID, rule ID, group ID or title.
 
-![Searching for "ssh" narrows the list to the one SSH rule](docs/screenshots/search.png)
+![Searching for "password" narrows the list to the one password rule](docs/screenshots/search.png)
 
 **3. Set the benchmark properties.** ID, title, version, release date, publisher and description live in one dialog. Leave a rule's group or rule ID blank and it is derived from the benchmark ID on export.
 

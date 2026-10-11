@@ -40,12 +40,12 @@ def grab(name):
 
 def load_demo():
     app.load_benchmark(parse_benchmark_xml("examples/demo-benchmark.xml"))
-    app.select_rule(1)          # the high-severity SSH root logon rule
+    app.select_rule(4)          # the high-severity remote session encryption rule
     app.update_xml_preview()
 
 
 def search():
-    app.search_entry.insert(0, "ssh")
+    app.search_entry.insert(0, "password")
     app.on_search_changed()
 
 

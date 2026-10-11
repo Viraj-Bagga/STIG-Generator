@@ -7,6 +7,14 @@ from models import STIGBenchmark, STIGRule
 # blank are derived from the benchmark ID, so nothing product-specific is baked in.
 DEFAULT_BENCHMARK_ID = "xccdf_org.example_benchmark"
 
+# Empty sub-elements written after VulnDiscussion in each rule description, in the
+# order the published STIG convention uses, so readers that expect them find them.
+DESCRIPTION_PLACEHOLDERS = (
+    "FalsePositives", "FalseNegatives", "Documentable", "Mitigations",
+    "SeverityOverrideGuidance", "PotentialImpacts", "ThirdPartyTools",
+    "MitigationControl", "Responsibility", "IAControls",
+)
+
 
 def _id_prefix(benchmark_id):
     """'xccdf_org.example_benchmark' -> 'xccdf_org.example'."""
@@ -212,18 +220,12 @@ def generate_benchmark_xml(benchmark):
         rule_id  = rule.rule_id  or f"{prefix}_rule_{idx + 1:04d}"
         severity = rule.severity or "medium"
 
-        desc_inner = (
-            f"        <VulnDiscussion>{_cdata_safe(rule.vuln_discussion)}</VulnDiscussion>\n"
-            "        <FalsePositives></FalsePositives>\n"
-            "        <FalseNegatives></FalseNegatives>\n"
-            "        <Documentable>false</Documentable>\n"
-            "        <Mitigations></Mitigations>\n"
-            "        <SeverityOverrideGuidance></SeverityOverrideGuidance>\n"
-            "        <PotentialImpacts></PotentialImpacts>\n"
-            "        <ThirdPartyTools></ThirdPartyTools>\n"
-            "        <MitigationControl></MitigationControl>\n"
-            "        <Responsibility>System Administrator</Responsibility>\n"
-            "        <IAControls></IAControls>"
+        # VulnDiscussion comes from the form. The other sub-elements are the
+        # placeholders the public XCCDF/STIG convention expects in every rule
+        # description; they are written empty so nothing is assumed for the reader.
+        desc_inner = "\n".join(
+            [f"        <VulnDiscussion>{_cdata_safe(rule.vuln_discussion)}</VulnDiscussion>"]
+            + [f"        <{tag}></{tag}>" for tag in DESCRIPTION_PLACEHOLDERS]
         )
 
         lines += [
